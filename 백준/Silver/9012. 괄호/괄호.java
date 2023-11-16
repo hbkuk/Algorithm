@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.Stack;
 
@@ -12,35 +11,34 @@ public class Main {
 
         // 2. 전체 반복
         for (int i = 0; i < caseCount; i++) {  
-            String[] datas = br.readLine().trim().split("");
+            String input = br.readLine().trim();
+            boolean isVPS = isVPS(input);
+            printResult(isVPS);
+        }
+    }
 
-            // 2-1. 양끝 괄호 확인
-            if(!datas[0].equals("(") || !datas[datas.length-1].equals(")")) {
-                System.out.println("NO");
-                continue;
-            }
-
-            boolean isVPS = true;
-
-            // 2-2. Stack 만들기
-            Stack<String> stack = new Stack<>();
-            
-            for(String data : datas) {
-                if(data.equals("(")) {
-                    stack.push("(");
+    public static boolean isVPS(String data) {
+        Stack<Character> stack = new Stack<>();
+        
+        for(char c : data.toCharArray()) {
+            if(c == ('(')) {
+                stack.push(c);
+            } else {
+                if(stack.isEmpty()) {
+                    return false;
                 } else {
-                    if(stack.isEmpty()) {
-                        isVPS = false;
-                    } else {
-                        stack.pop();
-                    }
+                    stack.pop();
                 }
             }
-            if(isVPS && stack.isEmpty()) {
-                System.out.println("YES");
-            } else {
-                System.out.println("NO");
-            }
+        }
+        return stack.isEmpty();
+    }
+
+    public static void printResult(boolean result) {
+        if(result) {
+            System.out.println("YES");
+        } else {
+            System.out.println("NO");
         }
     }
 }
