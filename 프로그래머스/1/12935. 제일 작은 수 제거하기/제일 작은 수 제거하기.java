@@ -17,16 +17,8 @@ class Solution {
             }
         }
         
-        // 최소값이 몇개인지 확인하기
-        int duplicateCount = 0;
-        for(int i = 0; i < arr.length; i++) {
-            if(minNum == arr[i]) {
-                duplicateCount ++;
-            }
-        }
-        
         // 최소 값을 뺀 배열 반환하기
-        int[] result = new int[arr.length - duplicateCount];
+        int[] result = new int[arr.length - 1];
         int lastIndex = 0;
         for(int i = 0; i < arr.length; i++) {
             if(arr[i] != minNum) {
