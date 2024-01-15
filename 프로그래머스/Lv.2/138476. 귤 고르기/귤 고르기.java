@@ -13,11 +13,8 @@ class Solution {
         // 정렬
         Arrays.sort(tangerine);
         
-        // 제일 큰 수 확인
-        int maxNumber = tangerine[tangerine.length - 1];
-        
         // 몇개인지 담을 배열 선언
-        int[] count = new int[maxNumber + 1];
+        int[] count = new int[tangerine[tangerine.length - 1] + 1];
         for(int value : tangerine) {
             count[value] ++;
         }
@@ -25,12 +22,13 @@ class Solution {
         // 제일 많은 것부터 k개 만큼 빼기
         int typeCount = 0;
         int lastIndex = count.length - 1;
+        
         Arrays.sort(count);
-        while(k > 0) {
-            k = k - count[lastIndex];
+        
+        while(k > 0 && lastIndex >= 0) {
+            k -= count[lastIndex--];
             
             typeCount ++;
-            lastIndex --;
         }
         
         return typeCount;
