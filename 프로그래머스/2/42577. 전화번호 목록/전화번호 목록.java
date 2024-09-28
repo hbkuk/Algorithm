@@ -1,24 +1,25 @@
 import java.util.*;
 
 class Solution {
-    public boolean solution(String[] phoneBook) {
-        // Map 생성
+    public boolean solution(String[] phone_book) {
+        // 맵 생성
         Map<String, Integer> map = new HashMap<>();
         
-        // 때려박기
-        for(int i =0; i < phoneBook.length; i++) {
-            map.put(phoneBook[i], i);
+        // 맵 담기
+        for(String phone_number : phone_book) {
+            map.put(phone_number, 1);
         }
         
-        // 찾기
-        for(int i = 0; i < phoneBook.length; i++) {
-            for(int j = 0; j < phoneBook[i].length(); j++) {
-                if(map.containsKey(phoneBook[i].substring(0, j))) {
+        // 맵에서 찾기
+        for(String phone_number : phone_book) {
+            String prefix = "";
+            for(int i = 0; i < phone_number.length() - 1; i++) {
+                prefix += phone_number.charAt(i);
+                if(map.containsKey(prefix)) {
                     return false;
                 }
             }
         }
         return true;
-        
     }
 }
