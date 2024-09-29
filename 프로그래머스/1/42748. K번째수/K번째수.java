@@ -2,23 +2,23 @@ import java.util.*;
 
 class Solution {
     public int[] solution(int[] array, int[][] commands) {
-        // 결과 배열
-        List<Integer> result = new ArrayList<>();
+        int[] answer = new int[commands.length];
         
-        for(int[] command : commands) {
-            int i = command[0];
-            int j = command[1];
-            int k = command[2];
+        for(int i = 0; i < commands.length; i++) {
+            int startIdx = commands[i][0] - 1;
+            int endIdx = commands[i][1] - 1;
+            int targetIdx = commands[i][2] - 1;
+
+            int[] slicedArray = new int[endIdx - startIdx + 1];
+
+            for(int j = 0; j < slicedArray.length; j++) {
+                slicedArray[j] = array[startIdx + j];
+            }
             
-            int[] tempArray = Arrays.copyOfRange(array, i - 1, j);
-            
-            Arrays.sort(tempArray);
-            
-            result.add(tempArray[k - 1]);
+            Arrays.sort(slicedArray);
+            answer[i] = slicedArray[targetIdx];
         }
         
-        // List를 int[] 변환
-        return result.stream()
-                    .mapToInt(Integer::intValue).toArray();
+        return answer;
     }
 }
