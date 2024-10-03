@@ -16,61 +16,34 @@ public class Main {
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         
-        int N = scan.nextInt(); // 도시의 개수 
+        int N = scan.nextInt(); // 도시의 개수
         
-        int requiredDistance = 0; // 필요한 총 거리
+        long[] distance = new long[N - 1];
+        long[] prices = new long[N];
         
-        int[] distance = new int[N - 1]; // 거리 정보
-        for(int i = 0; i < distance.length; i++) {
-            distance[i] = scan.nextInt();
-            requiredDistance += distance[i];
+        for (int i = 0; i < N - 1; i++) {
+            distance[i] = scan.nextLong();
         }
         
-        int[] place = new int[N]; // 주유소 리터당 가격 정보
-        for(int i = 0; i < place.length; i++) {
-            place[i] = scan.nextInt();
+        for (int i = 0; i < N; i++) {
+            prices[i] = scan.nextLong();
         }
         
-        int totalPrice = 0; // 총 비용
-        int totalDistance = 0; // 지나온 총 거리
+        long totalCost = 0; // 총 주유 비용
+        long minPrice = prices[0]; // 최소 주유 비용
         
-        // 여정 시작
-        for(int i = 0; i < place.length; i++) {
-            boolean isFind = false; // 저렴한 주유소 여부
-            int currentPrice = place[i]; // 현재 주유소 가격
+        // 가격이 더 싼 주유소 찾기
+        for(int i = 0; i < N - 1; i++) {
             
-            // 현재 place보다 더 싼 주유소가 있는지?
-            for(int j = i + 1; j < place.length - 1; j++) {
-                int nextPrice = place[j]; // 다음 싼 주유소 가격
-                
-                // 더 저렴한 주유소 찾음 -> 해당 주유 후 이동  
-                if(currentPrice > nextPrice) {
-                    int nextDistance = 0; // 다음 주유소까지 거리
-                    
-                    for (int k = i; k < j; k++) {
-                        nextDistance += distance[k];
-                    }
-                    
-                    totalPrice += nextDistance * currentPrice; // 총 가격 갱신
-                    totalDistance += nextDistance; // 지나온 총거리 갱신
-                    
-                    // 인덱스도 이동 필요
-                    i = j;
-                    i --;
-                    isFind = true;
-                    break;
-                    
-                }
+            // 최소 비용보다 더 싼 주유소를 찾은 경우
+            if(minPrice > prices[i]) {
+                minPrice = prices[i];
             }
             
-            if(!isFind) {
-                totalPrice += (currentPrice * (requiredDistance - totalDistance));
-                
-                break;
-            }
+            totalCost += (minPrice * distance[i]);
         }
         
-        System.out.println(totalPrice);
+        System.out.println(totalCost);
     }
 }
  
