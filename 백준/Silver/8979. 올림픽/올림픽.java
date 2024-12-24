@@ -1,75 +1,44 @@
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
-    
-    /**
-     * 금메달 수가 더 많은 나라
-     * 금메달 수가 같으면, 은메달 수가 더 많은 나라
-     * 금, 은메달 수가 모두 같으면, 동메달 수가 더 많은 나라
-     */
     public static void main(String[] args) {
-        
-        Scanner sc = new Scanner(System.in);
-        
-        int N = sc.nextInt();
-        int K = sc.nextInt();
-        
-        // 메달 입력받기
+        Scanner scan = new Scanner(System.in);
+
+        int N = scan.nextInt(); // 국가 수
+        int K = scan.nextInt(); // 순위를 알고 싶은 국가
         int[][] medals = new int[N][4];
+
         for (int i = 0; i < N; i++) {
-            
-            int nationalCode = sc.nextInt();
-            int gold = sc.nextInt();
-            int silver = sc.nextInt();
-            int bronze = sc.nextInt();
-            
-            medals[i][0] = nationalCode;
-            medals[i][1] = gold;
-            medals[i][2] = silver;
-            medals[i][3] = bronze;
+            medals[i][0] = scan.nextInt(); // 국가 번호
+            medals[i][1] = scan.nextInt(); // 금메달 수
+            medals[i][2] = scan.nextInt(); // 은메달 수
+            medals[i][3] = scan.nextInt(); // 동메달 수
         }
-        
-        // 메달 정렬하기
-        Arrays.sort(medals, new Comparator<int[]>() {
-            @Override
-            public int compare(int[] o1, int[] o2) {
-                // 금메달 수가 다르면
-                if (o1[1] != o2[1]) {
-                    return Integer.compare(o2[1], o1[1]);
-                }
-                
-                // 금메달 수가 같고, 은메달 수가 다르면
-                else if (o1[2] != o2[2]) {
-                    return Integer.compare(o2[2], o1[2]);
-                }
-                
-                // 은메달 수가 같고, 동메달 수가 다르면
-                else {
-                    return Integer.compare(o2[3], o1[3]);
-                }
-            }
+
+        // 메달 정렬: 금 > 은 > 동
+        Arrays.sort(medals, (a, b) -> {
+            if (b[1] != a[1]) return b[1] - a[1]; // 금메달 내림차순
+            if (b[2] != a[2]) return b[2] - a[2]; // 은메달 내림차순
+            return b[3] - a[3]; // 동메달 내림차순
         });
-        
-        int[] rank = new int[N + 1];
-        // rank + 1 하면서, 순위 매기기
-        int lastLank = 1;
-        
-        rank[medals[0][0]] = lastLank;
-        for (int i = 1; i < N; i++) {
-            
-            if (medals[i - 1][1] != medals[i][1] ||
-                medals[i - 1][2] != medals[i][2] ||
-                medals[i - 1][3] != medals[i][3]) {
-                
-                lastLank ++;
+
+        int lastRank = 1; // 현재 순위
+        for (int i = 0; i < N; i++) {
+            // 첫 번째 국가를 제외하고, 이전 국가와 메달 비교
+            if (i > 0) {
+                boolean 동일_메달 = (medals[i - 1][1] == medals[i][1] &&
+                                    medals[i - 1][2] == medals[i][2] &&
+                                    medals[i - 1][3] == medals[i][3]);
+                if (!동일_메달) {
+                    lastRank = i + 1; // 동일하지 않으면 순위 증가
+                }
             }
-            
-            rank[medals[i][0]] = lastLank;
+
+            // K번 국가의 순위 출력 후 종료
+            if (medals[i][0] == K) {
+                System.out.println(lastRank);
+                return;
+            }
         }
-        
-        // K에 해당하는 순위 출력하기
-        System.out.println(rank[K]);
     }
 }
