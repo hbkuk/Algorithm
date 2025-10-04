@@ -14,30 +14,7 @@ class Solution {
         System.out.println("1) 소문자_치환: " + 소문자_치환);
         
         // 2) 특수 문자 치환, -_.~!@#$%^&*()=+[{]}:?,<>/
-        String 특수_문자_치환 = 소문자_치환
-            .replace("~", "")
-            .replace("!", "")
-            .replace("@", "")
-            .replace("#", "")
-            .replace("$", "")
-            .replace("%", "")
-            .replace("^", "")
-            .replace("&", "")
-            .replace("*", "")
-            .replace("(", "")
-            .replace(")", "")
-            .replace("=", "")
-            .replace("+", "")
-            .replace("[", "")
-            .replace("{", "")
-            .replace("]", "")
-            .replace("}", "")
-            .replace(":", "")
-            .replace("?", "")
-            .replace(",", "")
-            .replace("<", "")
-            .replace(">", "")
-            .replace("/", "");
+        String 특수_문자_치환 = 소문자_치환.replaceAll("[^a-z0-9-_.]", "");
         System.out.println("2) 특수 문자 치환: " + 특수_문자_치환);
         
         // 3. 연속된 마침표 하나로 통합 -> pointer로 확인하기
