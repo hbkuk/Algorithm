@@ -1,30 +1,38 @@
+import java.util.*;
+
 class Solution {
     
-    public static int answer = 0;
-    
     public int solution(int n, int[][] computers) {
-        // 각 노드에서 다른 노드와 연결된 노드가 있을 경우 DFS를 진행한다.
-        //     - 이동할 수 있는 경우 answer + 1을 한다.
-        //     - 만약, 방문한 경우 동일한 노드는 방문하지 않는다.
-        boolean[] visited = new boolean[n]; // 노드 방문 정보
+        int 정답 = 0;
         
-        for(int i = 0; i < computers.length; i++) {
-            if(!visited[i]) {
-                dfs(i, computers, visited);
-                answer ++;   
+        boolean[] 방문_여부 = new boolean[n];    
+        for(int i = 0; i < n; i++) {
+            if(!방문_여부[i]) {
+                System.out.println("bfs를 시작합니다.: " + i);
+                bfs(i, computers, 방문_여부);
+                정답 ++;   
             }
         }
-        
-        return answer;
+        return 정답;
     }
     
-    public void dfs(int nodeIndex, int[][] computers, boolean[] visited) {
-        visited[nodeIndex] = true; // 미리 방문표시
+    public void bfs(int index, int[][] computers, boolean[] 방문_여부) {
+        // 1. 방문 체크..
+        방문_여부[index] = true;
         
-        for(int i = 0; i < computers[nodeIndex].length; i++) {
-            // 방문하지 않았거나, 1인 경우 방문한다.
-            if(i != nodeIndex && computers[nodeIndex][i] == 1 && !visited[i]) {
-                dfs(i, computers, visited);
+        // 다른 네트워크들 방문하기..
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(index);
+        
+        while(!queue.isEmpty()) {
+            int 현재_인덱스 = queue.poll();
+            int[] 현재_연결된_컴퓨터_목록 = computers[현재_인덱스];
+            for(int i = 0; i < 현재_연결된_컴퓨터_목록.length; i++) {
+                // 자신이 아니면서 && 연결되었으면서 && 방문하지 않은 경우
+                if (현재_인덱스 != i && 현재_연결된_컴퓨터_목록[i] == 1 && !방문_여부[i]) {
+                    queue.add(i);
+                    방문_여부[i] = true;
+                }
             }
         }
     }
