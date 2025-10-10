@@ -2,47 +2,59 @@ import java.util.*;
 
 class Solution {
     public String[] solution(String[][] tickets) {
-        // 항공권 데이터 Map에 저장
-        Map<String, PriorityQueue<String>> map = new HashMap<>();
-        for(String[] ticket : tickets) {
-            String dep = ticket[0];
-            String arv = ticket[1];
-            
-            PriorityQueue<String> queue = map.get(dep);
-            if(queue == null) {
-                queue = new PriorityQueue<String>();
-            }
-            queue.add(arv);
-            map.put(dep, queue);
-        }
+        String 출발_공항 = "ICN";
         
-        // 경로 저장 Path 만들기
-        List<String> path = new ArrayList<>();
+        List<List<String>> 경로_목록 = new ArrayList<>();
         
-        dfs("ICN", map, path);
+        List<String> 현재_경로 = new ArrayList<>();
+        현재_경로.add(출발_공항);
         
-        // 저장된 경로 반전
-        Collections.reverse(path);
+        boolean[] 항공권_사용_여부 = new boolean[tickets.length];
         
-        // 경로 출력
-        String[] answer = new String[path.size()];
-        for(int i = 0; i < path.size(); i++) {
-            answer[i] = path.get(i);
-        }
+        Arrays.sort(tickets, (a, b) -> {
+            return a[1].compareTo(b[1]);
+        });
         
-        return answer;
+        dfs(출발_공항, tickets, 현재_경로, 경로_목록, 항공권_사용_여부);
+    
+        List<String> 가장_첫번째_경로 = 경로_목록.get(0);    
+        return 가장_첫번째_경로.toArray(new String[0]);
     }
     
-    public void dfs(String current, Map<String, PriorityQueue<String>> map, List<String> path) {
-        PriorityQueue<String> nextList = map.get(current); 
-        
-        // 다음 경로가 있을 경우
-        while(nextList != null && !nextList.isEmpty()) { 
-            String next = nextList.poll();
-            dfs(next, map, path);
+    void dfs(String 출발_공항, String[][] tickets, List<String> 현재_경로, List<List<String>> 경로_목록, boolean[] 항공권_사용_여부) {     
+        // 주어진 항공권을 모두 사용한 경우
+        if(현재_경로.size() == tickets.length + 1) {
+             경로_목록.add(new ArrayList<>(현재_경로));
+             return;
         }
         
-        // 경로에 해당 위치 추가하기
-        path.add(current);
+        for(int i = 0; i < tickets.length; i++) {
+            // 사용한 경우 스킵
+            if(항공권_사용_여부[i]) {
+                continue;
+            }
+            
+            // 이륙해보자.
+            String[] 사용할_항공권 = tickets[i];
+            
+            String 시작_공항 = 사용할_항공권[0];
+            
+            String 도착_공항 = 사용할_항공권[1];
+            
+            if(출발_공항.equals(시작_공항)) {
+                // 사용 여부 체크
+                항공권_사용_여부[i] = true;
+                
+                // 현재 경로 추가
+                현재_경로.add(도착_공항);
+                
+                // 새로운 dfs 진행
+                dfs(도착_공항, tickets, 현재_경로, 경로_목록, 항공권_사용_여부);
+                
+                // 재귀 끝나고 나오면 다른 케이스로 진행되어야 하기 때문에
+                항공권_사용_여부[i] = false;
+                현재_경로.remove(현재_경로.size() - 1);
+            }
+        }
     }
 }
