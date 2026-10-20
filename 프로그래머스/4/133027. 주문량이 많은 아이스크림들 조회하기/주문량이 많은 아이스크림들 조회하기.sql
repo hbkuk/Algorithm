@@ -19,11 +19,10 @@
 
 select FLAVOR
 from (
-select FLAVOR, SUM(TOTAL_ORDER) 'total'
-from (SELECT FLAVOR, TOTAL_ORDER FROM FIRST_HALF
-UNION ALL
-SELECT FLAVOR, TOTAL_ORDER FROM JULY) as merge
+    SELECT FLAVOR, TOTAL_ORDER FROM FIRST_HALF
+    UNION ALL
+    SELECT FLAVOR, TOTAL_ORDER FROM JULY
+) as merge
 group by FLAVOR
-order by total desc
-) as result
+order by SUM(TOTAL_ORDER) desc
 limit 3
