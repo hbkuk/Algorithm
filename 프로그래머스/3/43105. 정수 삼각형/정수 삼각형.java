@@ -1,49 +1,44 @@
 /**
-    1. 위에서 아래로 이어지는 경로
-    2. 아래 칸으로 이동 시, 아래 대각선 왼쪽, 혹은 오른쪽으로 이동 가능
-    dp[1] = 7
-    dp[2] = 10, 15
-    dp[3] = 18, 11, 15
-**/
+[풀이 방식]
+1. DP 방식으로 풀기.
 
-/**
-    1. 각 배열의 요소별 최댓 값을 저장한다.
-    2. 가장 바닥까지 최댓 값을 저장 후 바닥 중 가장 큰 값을 확인 후 반환한다.
-**/
+[코드 작성 방식]
+1. DP 배열 만들기
+2. 배열 첫번째 칸에서부터 시작.
+3. 현재 행과 열을 (a,b) 라고 했을때 (a-1) 행에서.. 열은 b, b+1 까지 갱신 가능.
+  -> 업데이트는 최대 값을 업데이트한다. Math.max 함수 사용.
+4. 전역 변수로 최대 값을 계속 갱싱한다.
+
+
+[예외 케이스]
+1. 숫자 21억 넘는 이슈 -> 없음.
+2. 시간 초과 -> X.
+
+
+*/
+
+import java.util.*;
 class Solution {
     public int solution(int[][] triangle) {
-        int[][] dp = new int[triangle.length][triangle.length];
+        int answer = 0;
+        
+        int[][] dp = new int[triangle.length][triangle[triangle.length -1].length];
         dp[0][0] = triangle[0][0];
         
-        for(int i = 1; i <= triangle.length - 1; i++) {
-            for(int k = 0; k <= i; k++) {
+        // 2중 for문.
+        // for문 조건 -1인 이유 -> 마지막 행은 순회할 필요 없음. 그 전 행에서까지만 갱신하면됨.
+        for(int i = 0; i < triangle.length - 1; i++) {
+            for(int j = 0; j < triangle[i].length; j++) {
+                // 현재 위치에서 1행 큰 값과 현재 위치에서 1행 큰 값 + 1열 큰값 갱신.
                 
-                // 가장 왼쪽인 경우 -> 오른쪽 대각선만 비교 가능
-                if(k == 0) {
-                    dp[i][k] = dp[i - 1][k] + triangle[i][k];
-                // 가장 오른쪽인 경우 -> 왼쪽 대각선만 비교 가능
-                } else if(k == i) {
-                    dp[i][k] = dp[i - 1][k - 1] + triangle[i][k];
-                // 그 외 모두 -> 오른쪽, 왼쪽 대각선 모두 비교 가능
-                } else {
-                    // 왼쪽
-                    int 왼쪽_값  = dp[i - 1][k - 1] + triangle[i][k];
-                    
-                    // 오른쪽
-                    int 오른쪽_값  = dp[i - 1][k] + triangle[i][k];
-                    
-                    dp[i][k] = Math.max(왼쪽_값, 오른쪽_값);
-                }
+                dp[i+1][j] = Math.max(dp[i+1][j], dp[i][j] + triangle[i+1][j]);
+                dp[i+1][j+1] = Math.max(dp[i+1][j+1], dp[i][j] + triangle[i+1][j + 1]);
+                
+                answer = Math.max(Math.max(answer, dp[i+1][j]), Math.max(answer, dp[i+1][j + 1]));
             }
         }
         
-        // 가장 바닥에서 최댓 값 확인 후 반환.
-        int 최댓_값 = 0;
-        
-        for(int k = 0; k <= dp.length - 1; k++) {
-            최댓_값 = Math.max(최댓_값, dp[triangle.length - 1][k]);
-        }
-        
-        return 최댓_값;
+   
+        return answer;
     }
 }
