@@ -1,55 +1,64 @@
-import java.util.*;
+/**
+[문제 분석]
+1. BFS/DFS 푸는 문제임.
 
+[풀이 방식]
+1. 탐색할 곳을 저장해두는 Queue & visited 배열 만들기.
+2. Queue에서 하나씩 꺼내서 상하좌우 이동할 수 있는지 확인한다.
+3.   -  맵 범위 안인지 & 방문 안했던 곳인지 & 벽에 막혀있지 않은지
+
+[예외 케이스]
+1. 도착할 수 없음 -> -1
+
+**/
+
+import java.util.*;
 class Solution {
-    
-    static int[] dr = {-1, 1, 0, 0}; // 상,하,좌,우
-    static int[] dc = {0, 0, -1, 1};
-    
-    /** 
-        해당 문제는 BFS로 문제를 푼다.
-        모든 경우의 수를 확인해서 가장 빠르게 도착한 값을 리턴하면 된다.
-    */
     public int solution(int[][] maps) {
-        boolean[][] 방문_여부 = new boolean[maps.length][maps[0].length];
+        int tRow = maps.length - 1; // 목표 row
+        int tCol = maps[0].length - 1; // 목표 col
         
-        return bfs(0, 0, maps, 방문_여부); // 0,0 에서 출발해서 가장 빨리 도착한 값을 리턴한다.
-    }
-    
-    int bfs(int row, int col, int[][] 맵, boolean[][] 방문_여부) {
-        // 우선 방문 체크
-        방문_여부[row][col] = true;
+        Queue<int[]> queue = new LinkedList<>(); // 탐색할 곳 담을 queue
+        boolean[][] visited = new boolean[maps.length][maps[0].length]; // 방문 여부 체크.
         
-        // 큐에 우선 넣기
-        Queue<int[]> queue = new LinkedList<>();
-        queue.add(new int[]{row, col, 1}); // row, col, 칸수)
+        queue.add(new int[]{0, 0, 1}); // row,col,count
+        visited[0][0] = true; // 방문 체크.
         
-        // 큐가 빌때까지 반복
+        int answer = -1;
+        
+        // 큐가 빌떄까지 진행.
         while(!queue.isEmpty()) {
-            int[] poll = queue.poll();
+            int[] current = queue.poll(); // queue에서 꺼내기.
             
-            int cr = poll[0]; // 현재 row
-            int cc = poll[1]; // 현재 col
-            int cp = poll[2]; // 현재 point
+            int cRow = current[0]; // 현재 row
+            int cCol = current[1]; // 현재 col
+            int cCount = current[2]; // 현재 count
             
-            if(cr == 맵.length - 1 && cc == 맵[0].length - 1) {
-                return cp; // 찾은 경우
+            // 현재 위치가 목표점인지 확인.
+            if(cRow == tRow && cCol == tCol) {
+                return cCount;
             }
             
+            // 다음 탐색 위치 선정
+            int[] dr = {-1, 1, 0, 0}; // 상하좌우
+            int[] dc = {0, 0, -1, 1}; // 상하좌우
+            
             for(int i = 0; i < 4; i++) {
-                int nr = cr + dr[i];
-                int nc = cc + dc[i];
-                int np = cp + 1;
+                int nRow = cRow + dr[i];
+                int nCol = cCol + dc[i];
                 
-                // Map 범위 안 && 노방문 && 벽 아님
-                if(nr >= 0 && nr <= 맵.length - 1 &&
-                  nc >= 0 && nc <= 맵[0].length - 1 &&
-                   !방문_여부[nr][nc] && 맵[nr][nc] == 1) {
-                    방문_여부[nr][nc] = true;
-                    queue.add(new int[]{nr, nc, np});
-                }   
+                // 맵 범위 안인지 & 방문 안했던 곳인지 & 벽에 막혀있지 않은지
+                if(
+                    nRow >= 0 && nRow < maps.length && nCol >= 0 && nCol < maps[0].length &&
+                    !visited[nRow][nCol] &&
+                    maps[nRow][nCol] != 0   
+                ) {
+                    queue.add(new int[]{nRow, nCol, cCount + 1}); // row,col,count
+                    visited[nRow][nCol] = true; // 방문 체크.
+                }
             }
         }
         
-        return -1; // 찾지 못한 경우
+        return answer;
     }
 }
