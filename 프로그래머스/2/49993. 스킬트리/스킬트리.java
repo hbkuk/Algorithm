@@ -1,16 +1,18 @@
 /**
-[풀이 방식]
-1. 유저 스킬트리 -> 스킬트리와 상관 없는 스킬 필터링
-2. 스킬트리.startWiths(유저스킬트리)
-    - true: 가능한 스킬트리
-    - false: 불가능한 스킬트리
 
-[예외 케이스]
-1. 상관 없는 스킬 필터링 후 -> 아무것도 없을때.. -> true 나와야함.
+문제: 유저 스킬 트리 중 가능한 스킬트리 개수 return
 
-[성능]
-1. 스킬 필터링 -> O(N)
-2. startWiths -> O(N)
+접근 방식: 선행 스킬 순서의 알파벳을 제외한 알페벳 필터링 후 가능한 스킬트리 개수 세기.
+
+세부 방식:
+1. 유저 스킬 트리 순회.
+2. 선행 스킬 순서의 알파벳을 제외 후 목록 저장.
+3. 선행 스킬로 문자열이 시작하는지 확인.
+  - 시작: 카운트 
+  - 시작안함: 노 카운트
+
+예외 케이스:
+1. 알파벳 제외 후 빈 문자열일 경우 -> 카운팅 되어야함.
 
 **/
 
@@ -18,26 +20,23 @@ import java.util.*;
 
 class Solution {
     public int solution(String skill, String[] skill_trees) {
-        int answer = 0;
-        
+        List<String> filtered_trees = new ArrayList<>();
         for(String tree : skill_trees) {
-            // System.out.println("현재 스킬 트리 -> " + tree);
             
             StringBuilder sb = new StringBuilder();
             for(char c : tree.toCharArray()) {
-                // System.out.println("현재 문자 -> " + c);
-                // 찾음
                 if(skill.indexOf(c) != -1) {
                     sb.append(c);
-                    // System.out.println("skill.charAt(c) -> " + skill.indexOf(c));
                 }
             }
-            // System.out.println("필터링된 문자열 -> " + sb.toString());
-            String target = sb.toString();
             
-            // 예외 케이스. 필터링된 문자열의 길이가 0일 경우.
-            
-            if(skill.startsWith(target)) {
+            System.out.println(sb.toString());
+            filtered_trees.add(sb.toString());
+        }
+        
+        int answer = 0;
+        for(String tree : filtered_trees) {
+            if(skill.startsWith(tree)) {
                 answer ++;
             }
         }
