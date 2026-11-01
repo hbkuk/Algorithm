@@ -1,44 +1,52 @@
 /**
-[풀이 방식]
-1. DP 방식으로 풀기.
 
-[코드 작성 방식]
-1. DP 배열 만들기
-2. 배열 첫번째 칸에서부터 시작.
-3. 현재 행과 열을 (a,b) 라고 했을때 (a-1) 행에서.. 열은 b, b+1 까지 갱신 가능.
-  -> 업데이트는 최대 값을 업데이트한다. Math.max 함수 사용.
-4. 전역 변수로 최대 값을 계속 갱싱한다.
+문제: 거쳐간 숫자의 최댓값 구하가ㅣ.
 
+접근 방식:
+1. for문으로 거쳐간 경로를 저장해서 마지막에 합산 후 최댓값 갱신.
+2. 각 층별로 최댓값 미리 갱신해서 활용하기. -> DP
 
-[예외 케이스]
-1. 숫자 21억 넘는 이슈 -> 없음.
-2. 시간 초과 -> X.
+세부 내용
+1. 삼각형 꼭대기부터 마지막 줄 - 1 인 행까지 DP를 갱신해간다.
+2. 마지막 줄에서 최댓 값을 찾아 반환한다.
 
+예외 케이스
+1. 삼각형 높이가 1일때 -> 최댓값 제대로 나오는지.
+2. int 범위 넘어가는지? -> 10,000 * 100 * 5 ->  10^6 -> 십만단위임. 이슈없음.
 
-*/
+시간 복잡도
+1. 일반적으로 트리는 O(log N) -> 시간복잡도가 소요됨.
 
-import java.util.*;
+**/
 class Solution {
     public int solution(int[][] triangle) {
         int answer = 0;
         
-        int[][] dp = new int[triangle.length][triangle[triangle.length -1].length];
-        dp[0][0] = triangle[0][0];
+        // 가장 마지막 행의 배열의 크기가 제일 크기때문에 해당 크기만큼 생성. -> 비효율적인 저장 공간 존재
+        int[][] dp = new int[triangle.length][triangle[triangle.length - 1].length]; // 각 구간별 최댓값 갱신 
         
-        // 2중 for문.
-        // for문 조건 -1인 이유 -> 마지막 행은 순회할 필요 없음. 그 전 행에서까지만 갱신하면됨.
+        // 초기값 설정
+        dp[0][0] = triangle[0][0];
+        answer = dp[0][0];
+        
+        // 마지막 전까지행에서 업데이트.
         for(int i = 0; i < triangle.length - 1; i++) {
             for(int j = 0; j < triangle[i].length; j++) {
-                // 현재 위치에서 1행 큰 값과 현재 위치에서 1행 큰 값 + 1열 큰값 갱신.
+                int current = triangle[i][j]; // 현재 값.
                 
-                dp[i+1][j] = Math.max(dp[i+1][j], dp[i][j] + triangle[i+1][j]);
-                dp[i+1][j+1] = Math.max(dp[i+1][j+1], dp[i][j] + triangle[i+1][j + 1]);
-                
-                answer = Math.max(Math.max(answer, dp[i+1][j]), Math.max(answer, dp[i+1][j + 1]));
+                // DP 값 갱신. -> 바로 아래 행 + 우측 대각선 행.
+                dp[i + 1][j] = Math.max(dp[i + 1][j], dp[i][j] + triangle[i+1][j]);
+                dp[i + 1][j + 1] = Math.max(dp[i + 1][j+1], dp[i][j] + triangle[i+1][j+1]);
             }
         }
         
-   
+        // 마지막 행에서 최댓 값 가져오기
+        for(int i = 0; i < dp[0].length; i++) {
+            int value = dp[dp.length - 1][i];
+            
+            answer = Math.max(answer, value);
+        }
+        
         return answer;
     }
 }
